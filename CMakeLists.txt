@@ -22,10 +22,13 @@ ENDIF()
 
 
 INCLUDE_DIRECTORIES (include ${Boost_INCLUDE_DIRS})
-
 SET (SRC_TEST tests/test_parsers.cc)
-
 ADD_EXECUTABLE(parsim_tests ${SRC_TEST})
+
+
+
 
 ENABLE_TESTING()
 ADD_TEST(parsim_tests parsim_tests)
+
+INSTALL(DIRECTORY include DESTINATION ${CMAKE_INSTALL_PREFIX})
