@@ -21,19 +21,31 @@
 // ============================================================================
 namespace parsim {
     // ========================================================================
-    typedef std::string::const_iterator Iterator;
-    typedef SkipperGrammar<Iterator> Skipper;
-    typedef qi::expectation_failure<Iterator> expectation_failure;
+    typedef qi::expectation_failure<std::string::const_iterator> 
+      expectation_failure;
     // ========================================================================
-    template<typename Result> inline bool
-    parse_(const std::string& input, Result& result){
+    template<typename Input, typename Result> inline bool
+    parse_(const Input& input, Result& result){
+      typedef typename Input::const_iterator Iterator;
+      typedef SkipperGrammar<Iterator> Skipper;
       Skipper skipper;
       typename Grammar_<Iterator, Result, Skipper>::Grammar g;
       Iterator iter = input.begin(), end = input.end();
       return qi::phrase_parse(iter, end, g > qi::eoi, skipper , result);
     }
+    
+
+    
+    template<typename Result> inline bool
+      parse_(const char* input, Result& result) {
+        return parse_(std::string(input), result);
+      }
+
+
+
+   
     //=========================================================================
-    template<> inline bool
+    /*template<> inline bool
     parse_(const std::string& input, std::string& result){
       Skipper skipper;
       Grammar_<Iterator, std::string, Skipper>::Grammar g;
@@ -43,7 +55,7 @@ namespace parsim {
       }
       //@attention always
       return true;
-    }
+    }*/
     //=========================================================================
 } /*  parsim */
 //=============================================================================

@@ -45,6 +45,24 @@ BOOST_AUTO_TEST_CASE( primitive )
     }
 
     {
+      int result;
+      BOOST_REQUIRE(parsim::parse_("123", result));
+      BOOST_CHECK_EQUAL(result, 123);
+    }
+
+  {
+      std::string result;
+      BOOST_REQUIRE(parsim::parse_("'\u00F6'", result));
+      cout << result << endl;
+      BOOST_CHECK(result == "\u00F6");
+    }
+
+    /*{
+      std::wstring result;
+      BOOST_REQUIRE(parsim::parse_(L"'Hello'", result));
+      BOOST_CHECK_EQUAL(result, "Hello");
+    }*/
+    {
       long result;
       string number;
       

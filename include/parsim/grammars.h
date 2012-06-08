@@ -17,6 +17,7 @@
 //==============================================================================
 // Boost:
 //==============================================================================
+#define BOOST_SPIRIT_UNICODE // We'll use unicode (UTF8) all throughou
 #include <boost/spirit/include/qi.hpp>
 #include <boost/fusion/include/unused.hpp>
 #include <boost/fusion/include/std_pair.hpp>
@@ -36,7 +37,7 @@ namespace parsim {
 namespace sp    = boost::spirit;
 namespace ph    = boost::phoenix;
 namespace qi    = sp::qi;
-namespace enc   = sp::ascii;
+namespace enc   = sp::unicode;
 namespace rep   = sp::repository;
 //==============================================================================
 // Grammars
@@ -103,6 +104,7 @@ struct StringGrammar : qi::grammar<Iterator, std::string(), qi::locals<char>,
 //------------------------------------------------------------------------------
 };
 REGISTER_GRAMMAR(std::string, StringGrammar);
+//REGISTER_GRAMMAR(std::wstring, StringGrammar);
 //==============================================================================
 template< typename Iterator, typename Skipper>
 struct CharGrammar : qi::grammar<Iterator, char(), Skipper>
@@ -117,6 +119,7 @@ struct CharGrammar : qi::grammar<Iterator, char(), Skipper>
     qi::rule<Iterator, char(), Skipper> ch;
 };
 REGISTER_GRAMMAR(char, CharGrammar);
+//REGISTER_GRAMMAR(wchar_t, CharGrammar);
 //==============================================================================
 template< typename Iterator, typename Skipper>
 struct BoolGrammar : qi::grammar<Iterator, bool(), Skipper>
