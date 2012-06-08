@@ -1,9 +1,3 @@
-/*
- * Copyright (C) 2012 the parsim contributors
- *
- * This file is part of parsim, distributed under the New BSD License.
- * For full terms see the included COPYING file.
- */
 #define BOOST_TEST_MODULE Parsim
 #include <boost/test/included/unit_test.hpp>
 
@@ -16,6 +10,7 @@
 
 
 using namespace std;
+
 namespace qi = boost::spirit::qi;
 
 BOOST_AUTO_TEST_CASE( primitive )
@@ -71,12 +66,12 @@ BOOST_AUTO_TEST_CASE( primitive )
       BOOST_CHECK_EQUAL(result, 123.1);
     }
     // Fails
-    try{
+    {
       int result;
-      BOOST_REQUIRE(!parsim::parse_("123.4", result));
-    }catch(parsim::expectation_failure err){
-      BOOST_CHECK_EQUAL(err.what_.tag, "eoi");
-      BOOST_CHECK_EQUAL(string(err.first, err.last), ".4");
+      parsim::parse_error err;
+      BOOST_REQUIRE(!parsim::parse_("123.4", result, &err));
+      BOOST_CHECK_EQUAL(err.tag, "eoi");
+      BOOST_CHECK_EQUAL(err.found, ".4");
     }
 
 }
@@ -93,14 +88,13 @@ BOOST_AUTO_TEST_CASE( lists )
       BOOST_CHECK_EQUAL(result[2], 3);
     }
 
-    try{
+    {
       std::vector<int> result;
-      BOOST_REQUIRE(!parsim::parse_("[1,2,3", result));
-    }catch(parsim::expectation_failure err){
-      BOOST_CHECK_EQUAL(err.what_.tag, "] or )");
-      BOOST_CHECK_EQUAL(string(err.first, err.last), "");
+      parsim::parse_error err;
+      BOOST_REQUIRE(!parsim::parse_("[1,2,3", result, &err));
+      BOOST_CHECK_EQUAL(err.tag, "] or )");
+      BOOST_CHECK_EQUAL(err.found, "");        
     }  
-
 }
 
 
@@ -132,11 +126,11 @@ BOOST_AUTO_TEST_CASE( maps )
       BOOST_CHECK_EQUAL(result[2][0], "red");
     }    
 
-    try{
+    {
       std::map<int,string> result;
-      BOOST_REQUIRE(parsim::parse_("{1:'hello', 2:, 3:'world'}", result));
-    }catch(parsim::expectation_failure err){
-      BOOST_CHECK_EQUAL(err.what_.tag, "string");
-      BOOST_CHECK_EQUAL(string(err.first, err.last), ", 3:'world'}");
+      parsim::parse_error err;
+      BOOST_REQUIRE(!parsim::parse_("{1:'hello', 2:, 3:'world'}", result, &err));
+      BOOST_CHECK_EQUAL(err.tag, "string");
+      BOOST_CHECK_EQUAL(err.found, ", 3:'world'}");      
     }
 }

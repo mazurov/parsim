@@ -5,8 +5,8 @@
  * For full terms see the included COPYING file.
  */
 // =============================================================================
-#ifndef INCLUDE_PARSIM_GRAMMARS_H
-#define INCLUDE_PARSIM_GRAMMARS_H 1
+#ifndef PARSIM_INCLUDE_PARSIM_GRAMMARS_H
+#define PARSIM_INCLUDE_PARSIM_GRAMMARS_H 1
 #ifdef __GNUC__
 #pragma GCC system_header
 #endif
