@@ -185,14 +185,13 @@ struct VectorGrammar : qi::grammar<Iterator,
     typedef VectorT ResultT;
 //------------------------------------------------------------------------------
     VectorGrammar() : VectorGrammar::base_type(vec) {
-      begin = enc::char_('[')[qi::_val=']'] | enc::char_('{')[qi::_val='}']
-              | enc::char_('(')[qi::_val=')'];
+      begin = enc::char_('[')[qi::_val=']'] | enc::char_('(')[qi::_val=')'];
       end = enc::char_(qi::_r1);
       list = elementGrammar % ',';
       vec = begin[qi::_a = qi::_1] > -list[qi::_val=qi::_1] > end(qi::_a);
       
-      begin.name("[ or { or (");
-      end.name("] or } or )");
+      begin.name("[ or (");
+      end.name("] or )");
       list.name("comma_list");
       vec.name("list");
     }
@@ -337,8 +336,7 @@ struct MapGrammar : qi::grammar<Iterator,MapT(), Skipper>
         pair = key[op(qi::_val,qi::_1, tag_key())] > (qi::lit(':') | '=')  >
         value[op(qi::_val,qi::_1, tag_mapped())];
         list = -(pair % enc::char_(','));
-        map = (('['  > list > ']')
-              | ('{'  > list > '}'))[op(qi::_val,qi::_1)];
+        map = ('{'  > list > '}')[op(qi::_val,qi::_1)];
 
         map.name("map");
         key.name("key");

@@ -1,3 +1,9 @@
+/*
+ * Copyright (C) 2012 the parsim contributors
+ *
+ * This file is part of parsim, distributed under the New BSD License.
+ * For full terms see the included COPYING file.
+ */
 #define BOOST_TEST_MODULE Parsim
 #include <boost/test/included/unit_test.hpp>
 
@@ -135,6 +141,21 @@ BOOST_AUTO_TEST_CASE( maps )
       BOOST_CHECK_EQUAL(result[1], "hello");
       BOOST_CHECK_EQUAL(result[2], "world");
     }
+
+    {
+      std::map<int, vector<string> > result;
+      BOOST_REQUIRE(parsim::parse_("{1:['hello','world'], 2:['red']}", result));
+      BOOST_REQUIRE(result.size() == 2);
+      BOOST_REQUIRE_EQUAL(result.count(1), 1);
+      BOOST_REQUIRE_EQUAL(result.count(2), 1);
+
+      BOOST_REQUIRE_EQUAL(result[1].size(), 2);
+      BOOST_REQUIRE_EQUAL(result[2].size(), 1);
+      
+      BOOST_CHECK_EQUAL(result[1][1], "hello");
+      BOOST_CHECK_EQUAL(result[1][2], "world");
+      BOOST_CHECK_EQUAL(result[2][1], "red");
+    }    
 
     try{
       std::map<int,string> result;

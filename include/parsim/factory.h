@@ -13,6 +13,13 @@
 // Boost:
 // ============================================================================
 #include <boost/mpl/assert.hpp>
+/*
+ * Copyright (C) 2012 the parsim contributors
+ *
+ * This file is part of parsim, distributed under the New BSD License.
+ * For full terms see the included COPYING file.
+ */
+
 #include <boost/type_traits.hpp>
 // ============================================================================
 // Gaudi
@@ -33,8 +40,6 @@ namespace parsim {
       Iterator iter = input.begin(), end = input.end();
       return qi::phrase_parse(iter, end, g > qi::eoi, skipper , result);
     }
-    
-
     
     template<typename Result> inline bool
       parse_(const char* input, Result& result) {
