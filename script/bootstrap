@@ -1,0 +1,12 @@
+#!/bin/bash
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=`dirname "$SCRIPT"`
+
+ROOT_DIR=$SCRIPT_PATH/..
+BUILD_DIR=$ROOT_DIR/_build
+
+if [ ! -d $BUILD_DIR ]; then
+  mkdir $BUILD_DIR
+fi
+
+cd $BUILD_DIR && cmake .. && make && make test
