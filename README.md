@@ -59,4 +59,6 @@ The containers can hold values of primitive type or hold other containers.
 [10, 20, 30] # Python's  comment
 
 ```
-
+## Where it is used?
+[CERN Gaudi framework][Gaudi]
+[Gaudi]: http://svnweb.cern.ch/world/wsvn/gaudi/Gaudi/trunk/GaudiKernel/GaudiKernel/GrammarsV2.h
