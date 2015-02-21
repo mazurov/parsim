@@ -20,6 +20,7 @@
 #include <list>
 #include <set>
 #include <map>
+#include <tuple>
 //==============================================================================
 // Boost:
 //==============================================================================
@@ -35,6 +36,9 @@
 #include <boost/type_traits.hpp>
 
 #include <boost/spirit/repository/include/qi_confix.hpp>
+#include <boost/optional.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/fusion/include/boost_tuple.hpp>
 //==============================================================================
 namespace parsim {
 //==============================================================================
@@ -181,6 +185,129 @@ struct Grammar_<Iterator, T, Skipper,
                typename boost::enable_if<boost::is_floating_point<T> >::type >
 {
     typedef RealGrammar<Iterator, T, Skipper> Grammar;
+};
+//==============================================================================
+template<typename T>
+struct tuple_remove_first_type
+{
+};
+
+template<typename T>
+struct tuple_get_first_type
+{
+};
+
+template<typename T, typename... Ts>
+struct tuple_remove_first_type<std::tuple<T, Ts...>>
+{
+    typedef std::tuple<Ts...> type;
+};
+
+template<typename T, typename... Ts>
+struct tuple_get_first_type<std::tuple<T, Ts...>>
+{
+    typedef T type;
+};
+
+//==============================================================================
+
+template< typename Iterator, typename TupleT, std::size_t N, typename Skipper>
+struct TupleInnerGrammar : qi::grammar<Iterator,
+             TupleT(), qi::locals<typename tuple_get_first_type<TupleT>::type>, Skipper>
+{
+  //---------------------------------------------------------------------------
+  typedef TupleT ResultT;
+  typedef typename tuple_remove_first_type<TupleT>::type TailT;
+  typedef typename tuple_get_first_type<TupleT>::type HeadT;
+  //---------------------------------------------------------------------------
+  struct Operations
+    {
+        template <typename A, typename B = boost::fusion::unused_type,
+            typename C = boost::fusion::unused_type,
+            typename D = boost::fusion::unused_type>
+        struct result { typedef void type; };
+        //----------------------------------------------------------------------
+
+        void operator()(ResultT& res, HeadT& head, TailT& tail) const {
+            res = std::tuple_cat(std::tuple<HeadT>(head), tail);
+        }
+        //----------------------------------------------------------------------
+    };  
+  //---------------------------------------------------------------------------
+  TupleInnerGrammar(): TupleInnerGrammar::base_type(tup) {
+    tup = grHead[qi::_a = qi::_1] > ',' > grLast[op(qi::_val, qi::_a, qi::_1)];
+  }
+
+  TupleInnerGrammar<Iterator, TailT, N-1, Skipper> grLast;
+  typename
+      Grammar_<Iterator, HeadT, Skipper>::Grammar grHead;
+
+  qi::rule<Iterator, ResultT(), qi::locals<HeadT>, Skipper> tup;
+  ph::function<Operations> op;
+};
+
+template< typename Iterator, typename TupleT, typename Skipper>
+struct TupleInnerGrammar<Iterator, TupleT, 1, Skipper>: qi::grammar<Iterator,
+             TupleT(), Skipper>
+{
+  //---------------------------------------------------------------------------
+  typedef TupleT ResultT;
+  //typedef typename ResultT::value_type Tuple1T;
+  //---------------------------------------------------------------------------
+  struct Operations
+    {
+        template <typename A, typename B = boost::fusion::unused_type,
+            typename C = boost::fusion::unused_type,
+            typename D = boost::fusion::unused_type>
+        struct result { typedef void type; };
+        //---------------------------------------------------------------------
+        void operator()(ResultT& res,
+            const typename std::tuple_element<0, ResultT>::type& val) const {
+            res = ResultT();
+            std::get<0>(res) = val;
+        }
+        //----------------------------------------------------------------------
+    };  
+  //---------------------------------------------------------------------------
+  TupleInnerGrammar(): TupleInnerGrammar::base_type(tup) {
+    tup = grFirst[op(qi::_val, qi::_1)];
+  }
+
+  typename
+      Grammar_<Iterator, typename std::tuple_element<0, ResultT>::type,
+        Skipper>::Grammar grFirst;
+
+  qi::rule<Iterator, ResultT(), Skipper> tup;
+  ph::function<Operations> op;
+};
+
+//=============================================================================
+template< typename Iterator, typename TupleT, std::size_t N, typename Skipper>
+struct TupleGrammar : qi::grammar<Iterator, TupleT(), qi::locals<char>, Skipper>
+{
+  typedef TupleT ResultT;
+  TupleGrammar(): TupleGrammar::base_type(tup) {
+    begin = enc::char_('[')[qi::_val=']'] | enc::char_('(')[qi::_val=')'];
+    end = enc::char_(qi::_r1);
+
+    tup = begin[qi::_a = qi::_1] > grTuple[qi::_val = qi::_1] > end(qi::_a);
+  }
+
+  qi::rule<Iterator, char()> begin;
+  qi::rule<Iterator, void(char)> end;
+  qi::rule<Iterator, ResultT(), qi::locals<char>, Skipper> tup;
+  TupleInnerGrammar<Iterator, TupleT, N, Skipper> grTuple;
+};
+
+// -----------------------------------------------------------------------------
+// Register TupleGrammar for std::tuple:
+// ----------------------------------------------------------------------------
+template <typename Iterator, typename Skipper, class... Args>
+struct Grammar_<Iterator, std::tuple<Args...>, Skipper>
+{
+    typedef
+     TupleGrammar<Iterator, std::tuple<Args...>, sizeof...(Args  ),
+        Skipper> Grammar;
 };
 //==============================================================================
 template< typename Iterator, typename VectorT, typename Skipper>

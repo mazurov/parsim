@@ -1,12 +1,16 @@
 #define BOOST_TEST_MODULE Parsim
 #include <boost/test/included/unit_test.hpp>
+#include <boost/optional.hpp>
+
 
 #include "parsim.h"
 #include <string>
 #include <vector>
 #include <map>
+#include <tuple>
 #include <limits>
 #include <sstream>
+
 
 
 using namespace std;
@@ -133,4 +137,34 @@ BOOST_AUTO_TEST_CASE( maps )
       BOOST_CHECK_EQUAL(err.tag, "string");
       BOOST_CHECK_EQUAL(err.found, ", 3:'world'}");      
     }
+}
+
+BOOST_AUTO_TEST_CASE( tuples )
+{
+  {
+    std::tuple<int> result;
+    BOOST_REQUIRE(parsim::parse_("(2)", result));
+    BOOST_CHECK_EQUAL(std::get<0>(result), 2);
+  }
+  {
+    std::tuple<int, string> result;
+    BOOST_REQUIRE(parsim::parse_("(2, 'hello')", result));
+    BOOST_CHECK_EQUAL(std::get<0>(result), 2);
+    BOOST_CHECK_EQUAL(std::get<1>(result), "hello");
+  }
+
+  {
+    std::tuple<int, string, double> result;
+    BOOST_REQUIRE(parsim::parse_("(2, 'hello', 3.5)", result));
+    BOOST_CHECK_EQUAL(std::get<0>(result), 2);
+    BOOST_CHECK_EQUAL(std::get<1>(result), "hello");
+    BOOST_CHECK_EQUAL(std::get<2>(result), 3.5);
+  }
+
+  {
+    std::tuple<int, string> result;
+    BOOST_REQUIRE(!parsim::parse_("(2, 'hello', 1.0)", result));
+  }
+
+
 }
