@@ -36,9 +36,6 @@
 #include <boost/type_traits.hpp>
 
 #include <boost/spirit/repository/include/qi_confix.hpp>
-#include <boost/optional.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/fusion/include/boost_tuple.hpp>
 //==============================================================================
 namespace parsim {
 //==============================================================================

@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE( tuples )
 
   {
     std::tuple<int, string> result;
-    BOOST_REQUIRE(!parsim::parse_("(2, 'hello', 1.0)", result));
+    BOOST_CHECK(!parsim::parse_("(2, 'hello', 1.0)", result));
   }
 
 

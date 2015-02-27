@@ -47,6 +47,7 @@ The containers can hold values of primitive type or hold other containers.
 * **list**: [_value_, _value_, ...]
 * **dictionary**: {_key_: _value_, _key_: _value_, ...}
 * **pairs**: (_first_, _second_), (_first_: _second_)
+* **tuples**: (_valueOfType1_, _valueOfType2_, _valueOfType3_)
 
 
 ### Comments
