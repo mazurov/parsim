@@ -1,6 +1,6 @@
 # Strings Parsers C++ Library 
 
-<img src="https://github.com/downloads/mazurov/parsim/logo.png"/>
+<img src="https://raw.githubusercontent.com/mazurov/parsim/master/logo.png"/>
 
 The goal of this library is to have a extendable **headers only** C++ library  
 for converting strings that represent the python types (primitive types, lists, 
